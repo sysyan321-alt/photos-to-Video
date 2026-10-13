@@ -26,7 +26,8 @@ export default defineComponent({
     name: 'ProjectsView',
     components: { NavBar, Modal },
     data() {
-        return { state, menu: MENU, activeMenu: 'projects', preview: null, detail: null };
+        // failedCovers：图片加载失败过的封面（相册照片被删、产物被清理都会走到这里）
+        return { state, menu: MENU, activeMenu: 'projects', preview: null, detail: null, failedCovers: {} };
     },
     computed: {
         projects() {
@@ -41,8 +42,25 @@ export default defineComponent({
             if (key === 'gallery') state.view = 'gallery';
             if (key === 'analytics') state.view = 'analytics';
         },
+        /** 封面依次尝试：成片海报 -> 首帧缩略图 -> 文字兜底 */
         coverOf(project) {
-            return project.poster || project.keyframe || null;
+            if (project.poster && !this.failedCovers[`${project.id}:poster`]) {
+                return { url: project.poster, key: `${project.id}:poster` };
+            }
+            if (project.keyframe && !this.failedCovers[`${project.id}:keyframe`]) {
+                return { url: project.keyframe, key: `${project.id}:keyframe` };
+            }
+            return null;
+        },
+        coverUrl(project) {
+            const cover = this.coverOf(project);
+            // fileUrl 挂在 app.config.globalProperties 上（模板里能直接用），
+            // 在 options API 里必须通过 this 访问，否则是 ReferenceError
+            return cover ? this.fileUrl(cover.url) : '';
+        },
+        markCoverFailed(key) {
+            // 换了新对象才会触发重渲染：直接赋值同名属性在部分版本里不生效
+            this.failedCovers = { ...this.failedCovers, [key]: true };
         },
         statusText(project) {
             return STATUS_LABEL[project.status] || project.status;
@@ -86,7 +104,8 @@ export default defineComponent({
             <div class="poster-grid" v-if="projects.length">
                 <div class="poster-card" v-for="project in projects" :key="project.id">
                     <div class="poster-media" @click="openPreview(project)">
-                        <img v-if="coverOf(project)" :src="fileUrl(coverOf(project))" :alt="project.name" loading="lazy">
+                        <img v-if="coverOf(project)" :src="coverUrl(project)" :alt="project.name" loading="lazy"
+                             @error="markCoverFailed(coverOf(project).key)">
                         <div v-else class="poster-fallback">{{ (project.name || '·').slice(0, 1) }}</div>
                         <span class="poster-status" :class="statusClass(project)">{{ statusText(project) }}</span>
                         <span class="poster-duration" v-if="project.targetDuration">{{ project.targetDuration }}s</span>

@@ -22,6 +22,10 @@
 
 ![创作台](docs/images/console.png)
 
+**作品**：成片按竖版海报网格排列，点卡片就地播放、下载或删除。
+
+![作品](docs/images/projects.png)
+
 **模型接入**：四个环节各自选厂商、填凭据、测试连通，保存后热加载不用重启。
 
 ![模型接入](docs/images/providers.png)
