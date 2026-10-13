@@ -2,7 +2,7 @@
 
 /**
  * 容器内端到端自检：走真实 HTTP 接口，创建项目 -> 渲染 -> 轮询 -> 打印成片信息。
- * 用法：docker compose exec comicdrama node scripts/demo.js "一句话创意"
+ * 用法：docker compose exec growalbum node scripts/demo.js "一句话创意"
  */
 
 const BASE = process.env.DEMO_BASE || 'http://127.0.0.1:8787';

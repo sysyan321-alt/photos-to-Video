@@ -3,7 +3,7 @@
 /**
  * 成片自检：不依赖人眼，用像素统计确认「中文确实烧录进视频」。
  * 原理：字幕带（画面底部）叠加白色描边文字后，该区域平均亮度会明显高于无字版本。
- * 用法：docker compose exec comicdrama node scripts/verify.js [项目ID]
+ * 用法：docker compose exec growalbum node scripts/verify.js [项目ID]
  */
 
 const fs = require('fs');

@@ -42,7 +42,7 @@ export default defineComponent({
             ];
         },
         pathText() {
-            return state.project ? `/data/comicdrama/projects/${state.project.id}` : '';
+            return state.project ? `/data/growalbum/projects/${state.project.id}` : '';
         }
     },
     methods: {

@@ -9,7 +9,7 @@ const log = createLogger('cache');
 
 /**
  * 素材缓存：相同输入（提示词/provider/模型/参数）不再重复调用付费 API。
- * 键 = 内容哈希，落在 data/comicdrama/cache/<kind>/<hash>.<ext>。
+ * 键 = 内容哈希，落在 data/growalbum/cache/<kind>/<hash>.<ext>。
  */
 function createCache(storage) {
     const root = path.join(storage.root, 'cache');

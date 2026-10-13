@@ -3,7 +3,7 @@
 /**
  * 图生视频 provider 探活脚本：用「无效请求」问出接口真正需要的参数结构。
  * 不发送有效图片，因此不会产生生成费用。
- * 用法：docker compose exec comicdrama node scripts/probe-i2v.js
+ * 用法：docker compose exec growalbum node scripts/probe-i2v.js
  */
 
 const { createConfig } = require('../src/config');

@@ -10,13 +10,13 @@
 ## 快速开始（Docker）
 
 ```bash
-cd comicdrama
+cd photos-to-Video
 cp env.example.yaml env.yaml     # 可选：不填 Key 就是离线兜底模式
 docker compose up -d --build
 open http://localhost:8787
 ```
 
-成片与中间产物落在宿主机 `comicdrama/data/comicdrama/projects/<项目ID>/`。
+成片与中间产物落在宿主机 `photos-to-Video/data/growalbum/projects/<项目ID>/`。
 
 ## 运行模式
 
@@ -24,49 +24,38 @@ open http://localhost:8787
 
 | 环节 | 配了模型 | 没配模型（默认） |
 | --- | --- | --- |
-| 编剧 / 分镜 | Gemini 文本模型输出 JSON 剧本与分镜 | 内置漫剧节拍模板拆解创意 |
-| 关键帧 | Gemini/NanoBanana 按提示词出 9:16 关键帧 | ffmpeg 渲染的漫画分镜面板占位 |
-| 音轨 | IndexTTS-2 按镜头配音（含情绪提示） | ffmpeg 合成的环境音床 |
+| 编剧 / 分镜 | 文本模型输出 JSON 剧本与分镜 | 内置叙事节拍模板拆解创意 |
+| 关键帧 | 图像模型按提示词出 9:16 关键帧，或直接用相册照片裁切 | ffmpeg 渲染的面板占位 |
+| 音轨 | TTS 按镜头配音（含情绪提示） | ffmpeg 合成的环境音床 |
 
 所以**没有任何 Key 也能一键出片**，方便先验收链路；填上 Key 后同一套流程自动升级成真实素材。
 
 ## 接口
 
-| 方法 | 路径 | 说明 |
-| --- | --- | --- |
-| GET | `/api/health` | ffmpeg 版本、字幕字体、模型开关状态 |
-| GET | `/api/config` | 当前成片规格与运行模式 |
-| POST | `/api/ideas` | `{idea}` → 创意模块解析出 Brief（不创建项目） |
-| GET | `/api/ideas` · `/api/ideas/:id` | 列出 / 读取历史 Brief |
-| POST | `/api/projects` | `{idea}` 或 `{brief}` / `{briefId}` → 创建项目并生成剧本/分镜/关键帧提示词 |
-| GET | `/api/projects` | 项目列表 |
-| GET | `/api/projects/:id` | 项目详情（含分镜表与产物路径） |
-| POST | `/api/projects/:id/render` | 启动渲染任务，返回 `jobId` |
-| GET | `/api/jobs/:id` | 任务进度、步骤状态、日志 |
-| GET | `/api/projects/:id/download` | 下载成片 MP4 |
-| GET | `/api/files?path=` | 读取产物（支持 Range，供 `<video>` 拖动） |
+完整接口契约见 [`docs/API.md`](./API.md)。所有异步动作都是同一形状：
+**提交 → 202 + `jobId` → `GET /api/jobs/:id` 查进度 → `POST /api/jobs/:id/cancel` 取消**，
+便于被脚本或 Agent 框架当成工具调用。
 
 ## 目录结构
 
 ```
-comicdrama/
+photos-to-Video/
 ├── src/
 │   ├── config.js            # 环境变量 / env.yaml 配置
 │   ├── index.js             # 启动、路由挂载、静态资源
 │   ├── http/                # 微型 router + 路由表（含 Range 文件响应）
 │   ├── domain/              # brief 创意模型、project 数据模型、jobs 任务模型
-│   ├── agents/              # 创意 / 总控 / 编剧 / 分镜 / 美术 Agent
-│   ├── services/            # llm / image / tts / ffmpeg / storage 适配层
-│   └── pipeline/            # generateMvp：15 秒成片流水线
-├── web/                     # 控制台（创意输入、分镜表、预览、任务日志）
+│   ├── agents/              # 创意解析 / 总控制片 Agent
+│   ├── services/            # gallery / llm / image / tts / vision / ffmpeg / storage / cache / batch
+│   ├── providers/           # 四类模型的厂商适配器与注册表
+│   └── workflow/            # 工作流引擎 + 节点库 + 内置模板
+├── web/                     # 控制台（创作台、相册、提示词库、作品、批量、数据、模型接入）
 ├── Dockerfile
 └── docker-compose.yml
 ```
 
-架构说明见 [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)。
-
-> 下一步改造方案（固定工作流 + 提示词菜单栏 + 自接 API Key）见
-> [docs/WORKFLOW-PLAN.md](docs/WORKFLOW-PLAN.md)，尚未实施。
+架构说明见 [docs/ARCHITECTURE.md](ARCHITECTURE.md)，接口契约见 [docs/API.md](API.md)，
+产品现状与未实现清单见 [docs/PRODUCT.md](PRODUCT.md)。
 
 ## 已验证的成片参数
 

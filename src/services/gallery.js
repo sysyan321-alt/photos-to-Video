@@ -11,7 +11,7 @@ const {
 const log = createLogger('gallery');
 
 /**
- * 相册服务：文件落 data/comicdrama/gallery/，索引落 index.json。
+ * 相册服务：文件落 data/growalbum/gallery/，索引落 index.json。
  * 上传走原始二进制（前端直接发文件体），避免引入 multipart 依赖。
  */
 function createGalleryService({ storage }) {

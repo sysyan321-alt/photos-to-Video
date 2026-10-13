@@ -1,8 +1,8 @@
 {
-  "name": "comicdrama-agent",
+  "name": "growalbum",
   "version": "0.1.0",
   "private": true,
-  "description": "漫剧制片厂 ComicDrama Agent - MVP：创意 -> 剧本 -> 分镜 -> 关键帧 -> 15 秒 9:16 竖屏成片",
+  "description": "生长相册 GrowAlbum：相册驱动的 AIGC 短片工坊 —— 创意/相册 -> 剧本 -> 分镜 -> 关键帧 -> 15 秒 9:16 竖屏成片",
   "main": "src/index.js",
   "scripts": {
     "start": "node src/index.js",

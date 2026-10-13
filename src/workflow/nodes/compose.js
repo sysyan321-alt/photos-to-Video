@@ -7,7 +7,7 @@ const ffmpeg = require('../../services/ffmpeg');
 /** 文件名按实际镜头数算时长：相册照片不足时成片会更短，名字要跟着变 */
 function outputFileName(video, shotCount) {
     const seconds = Number((shotCount * video.shotSeconds).toFixed(2));
-    return `comicdrama_${video.width}x${video.height}_${seconds}s.mp4`;
+    return `growalbum_${video.width}x${video.height}_${seconds}s.mp4`;
 }
 
 module.exports = {

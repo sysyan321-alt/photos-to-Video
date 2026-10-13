@@ -1,0 +1,33 @@
+name: 自检
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  self-check:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [ "20.x", "22.x" ]
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: 准备 Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    # 本项目零 npm 依赖，不需要 npm install
+    - name: 语法检查（后端）
+      run: |
+        find src scripts -name '*.js' -print0 | xargs -0 -n1 node --check
+
+    - name: 模块图自检（前端）
+      run: node scripts/check-web.js
+
+    - name: 无 Key 兜底冒烟（离线链路）
+      run: node scripts/smoke.js "雨天的阳台，她收起晾了一夜的衬衫。"

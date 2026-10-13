@@ -84,7 +84,7 @@ server.listen(config.port, () => {
     const summary = describeConfig(config);
     const described = providers.describe();
     log.info('========================================');
-    log.info('短片制片厂 ComicDrama Agent 已启动');
+    log.info('生长相册 GrowAlbum 已启动');
     log.info(`控制台: http://localhost:${config.port}`);
     log.info(`产物目录: ${config.outputRoot}`);
     log.info(`成片规格: ${config.video.width}x${config.video.height} / ${config.video.totalSeconds}s / ${config.video.shots} 镜头`);

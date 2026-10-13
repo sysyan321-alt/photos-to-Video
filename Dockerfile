@@ -22,7 +22,7 @@ COPY scripts ./scripts
 
 ENV NODE_ENV=production \
     PORT=8787 \
-    COMIC_OUTPUT_ROOT=/data/comicdrama
+    COMIC_OUTPUT_ROOT=/data/growalbum
 
 EXPOSE 8787
 

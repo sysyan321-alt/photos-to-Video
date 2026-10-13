@@ -8,7 +8,7 @@ const { createLogger } = require('../logger');
 const log = createLogger('storage');
 
 /**
- * 选择可用的产物根目录：优先配置值（容器内是 /data/comicdrama），
+ * 选择可用的产物根目录：优先配置值（容器内是 /data/growalbum），
  * 在没有该目录的宿主机（例如本机直接 node 起服务）自动退到仓库内 data/。
  */
 function resolveRoot(preferred, appRoot) {
