@@ -1,0 +1,7 @@
+# 构建上下文里不需要的东西（data 里有几百 MB 的成片与私人照片）
+data
+docs
+.git
+.gitignore
+*.md
+env.yaml

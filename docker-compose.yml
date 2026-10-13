@@ -1,0 +1,20 @@
+services:
+  growalbum:
+    build: .
+    image: growalbum:latest
+    container_name: growalbum
+    ports:
+      - "8787:8787"
+    environment:
+      - NODE_ENV=production
+      - PORT=8787
+      - COMIC_OUTPUT_ROOT=/data/growalbum
+      # 文本模型走百炼（与图像/视频/配音共用同一把 Key）
+      - COMIC_PROVIDER_LLM=aliyun
+      - DASHSCOPE_LLM_MODEL=qwen3.7-max
+    volumes:
+      # 模型配置（可选）：cp env.example.yaml env.yaml 后按需填写 Key
+      - ./env.yaml:/app/env.yaml:ro
+      # 项目产物、关键帧、成片都落在宿主机 ./data
+      - ./data:/data
+    restart: unless-stopped
