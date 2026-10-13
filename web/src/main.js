@@ -41,6 +41,11 @@ const App = defineComponent({
             actions.loadPresets();
             actions.loadTemplates();
             actions.restoreFromHash();
+            // 支持 ?view=home|gallery|projects|batch|analytics|providers|filter 直接打开指定页面
+            const wanted = new URLSearchParams(location.search).get('view');
+            if (wanted && ['home', 'gallery', 'projects', 'batch', 'analytics', 'providers', 'filter'].includes(wanted)) {
+                state.view = wanted;
+            }
             window.addEventListener('keydown', onKeydown);
         });
         onUnmounted(() => window.removeEventListener('keydown', onKeydown));
