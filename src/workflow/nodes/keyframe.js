@@ -20,6 +20,7 @@ module.exports = {
         let modelCount = 0;
         let panelCount = 0;
         let cacheHits = 0;
+        let albumCount = 0;
 
         async function renderOne(index) {
             const shot = ctx.project.shots[index];
@@ -43,6 +44,7 @@ module.exports = {
                     ], (error, stdout, stderr) => (error ? reject(new Error(stderr || error.message)) : resolve()));
                 });
                 source = 'album';
+                albumCount += 1;
                 ctx.project.assets.albumFrames = (ctx.project.assets.albumFrames || 0) + 1;
                 ctx.log(`镜头 ${shot.shot_id} 使用相册照片（${shot.source_label || ''}）`);
             } else if (image.enabled && shot.image_source !== 'panel') {
@@ -60,7 +62,9 @@ module.exports = {
                     ctx.log(`镜头 ${shot.shot_id} 出图失败，改用面板占位：${error.message}`);
                 }
             }
-            if (source !== 'model') {
+            // 只有真的没拿到画面时才画占位面板：
+            // 相册照片已经裁切落盘，再画一次会把照片覆盖成渐变占位。
+            if (source === 'panel') {
                 await ffmpeg.renderPanel({
                     outPath,
                     colors: shot.palette,
@@ -98,7 +102,11 @@ module.exports = {
         }
 
         return {
-            detail: `模型出图 ${modelCount}（缓存命中 ${cacheHits}）/ 面板占位 ${panelCount}`,
+            detail: [
+                modelCount ? `模型出图 ${modelCount}${cacheHits ? `（缓存命中 ${cacheHits}）` : ''}` : '',
+                albumCount ? `相册照片 ${albumCount}` : '',
+                panelCount ? `面板占位 ${panelCount}` : ''
+            ].filter(Boolean).join(' / ') || '没有生成关键帧',
             degraded: panelCount > 0,
             cost: { unit: 'yuan', credits: Number((modelCount * 0.02).toFixed(4)) }
         };
